@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -20,6 +21,15 @@ public class CurlActivity extends Activity{
     // the java declaration for your wrapper test function
     public native String  getCurlResponse(String url);
 
+    public native String getJniString();
+
+    // please, let me live even though I used this dark programming technique
+    public String messageMe(String text) {
+        Log.e("ARUNKKK",text);
+        Toast.makeText(this,"From JNI "+text,Toast.LENGTH_LONG).show();
+        return text;
+    }
+
     // tell java which library to load
     static {
         System.loadLibrary("curl-ndk");
@@ -30,6 +40,8 @@ public class CurlActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        TextView tv = (TextView) findViewById(R.id.textView);
+        tv.setText(this.getJniString());
         executor=new ThreadPoolExecutor(1,1,1, TimeUnit.MINUTES,new ArrayBlockingQueue<Runnable>(1,true),new ThreadPoolExecutor.CallerRunsPolicy());
 
         Log.i(TAG,"Create CurlActivity");
@@ -63,5 +75,6 @@ public class CurlActivity extends Activity{
             }
         });
     }
+
 
 }

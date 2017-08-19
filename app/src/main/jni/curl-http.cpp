@@ -72,4 +72,20 @@ extern "C" {
 
 		return env->NewStringUTF(response.c_str());
 	}
+
+	//jstring Java_the_package_MainActivity_getJniString( JNIEnv* env, jobject obj){
+    jstring Java_fr_bmartel_android_curlndk_CurlActivity_getJniString( JNIEnv* env, jobject obj){
+        jstring jstr = (env)->NewStringUTF( "This comes from jni.");
+       // jclass clazz = (*env)->FindClass(env, "com/inceptix/android/t3d/MainActivity");
+        jclass clazz = (env)->FindClass( "fr/bmartel/android/curlndk/CurlActivity");
+        jmethodID messageMe = (env)->GetMethodID( clazz, "messageMe", "(Ljava/lang/String;)Ljava/lang/String;");
+        jobject result = (env)->CallObjectMethod( obj, messageMe, jstr);
+
+        const char* str = (env)->GetStringUTFChars((jstring) result, NULL); // should be released but what a heck, it's a tutorial :)
+        printf("%s\n", str);
+
+        return (env)->NewStringUTF( str);
+    }
+
+
 }
