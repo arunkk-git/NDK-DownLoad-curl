@@ -24,9 +24,9 @@ public class CurlActivity extends Activity{
     public native String getJniString();
 
     // please, let me live even though I used this dark programming technique
-    public String messageMe(String text) {
+    public  String messageMe(String text) {
         Log.e("ARUNKKK",text);
-        Toast.makeText(this,"From JNI "+text,Toast.LENGTH_LONG).show();
+        Toast.makeText(CurlActivity.this,"From JNI "+text,Toast.LENGTH_LONG).show();
         return text;
     }
 

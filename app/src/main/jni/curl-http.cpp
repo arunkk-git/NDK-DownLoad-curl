@@ -9,31 +9,25 @@
 using namespace std;
 
 string response;
+jobject g_obj;
+JNIEnv* g_env;
 const char * fileName = "/sdcard/downloadFile.txt";
 FILE* file;
-size_t writeCallback(char* buf, size_t size, size_t nmemb, void* up) {
 
+size_t writeCallback(char* buf, size_t size, size_t nmemb, void* up) {
 
 	for (int c = 0; c<size*nmemb; c++) {
 		response.push_back(buf[c]);
        	}
-
-/*    std::ofstream file1(fileName);
-        std::string my_string = "Hello text in file\n";
-        file1 << response;
-*/
 
         fstream ifs;
           ifs.open (fileName, fstream::binary | fstream::in | fstream::out);
 
           if (ifs.is_open())
           {
-        //   ifs.write("string to binary", strlen("string to binary"));
            ifs<<response;
            ifs.close();
           }
-
-
 
 	return size*nmemb;
 }
@@ -48,17 +42,7 @@ extern "C" {
         const char* url = env->GetStringUTFChars(jUrl, 0);//jstring2string(env,jUrl);
 		CURL* curl;
 
-		//FILE* file = fopen("/sdcard/helloARUN.txt","w+");
-            file = fopen(fileName,"w+");
-            if (file != NULL)
-            {
-            LOGE("file is created successfully ....");
-                fputs("HELLO WORLD!\n", file);
-                fflush(file);
-            //    fclose(file);
-            }
 
-		
 		curl_global_init(CURL_GLOBAL_ALL);
 
 		curl=curl_easy_init();
@@ -73,19 +57,20 @@ extern "C" {
 		return env->NewStringUTF(response.c_str());
 	}
 
-	//jstring Java_the_package_MainActivity_getJniString( JNIEnv* env, jobject obj){
-    jstring Java_fr_bmartel_android_curlndk_CurlActivity_getJniString( JNIEnv* env, jobject obj){
-        jstring jstr = (env)->NewStringUTF( "This comes from jni.");
-       // jclass clazz = (*env)->FindClass(env, "com/inceptix/android/t3d/MainActivity");
-        jclass clazz = (env)->FindClass( "fr/bmartel/android/curlndk/CurlActivity");
+void callJavaApi(std::string s){
+
+        JNIEnv *env =  g_env;
+        jstring jstr1 = env->NewStringUTF(s.c_str());
+         jclass clazz = (env)->FindClass( "fr/bmartel/android/curlndk/CurlActivity");
         jmethodID messageMe = (env)->GetMethodID( clazz, "messageMe", "(Ljava/lang/String;)Ljava/lang/String;");
-        jobject result = (env)->CallObjectMethod( obj, messageMe, jstr);
+        jobject result = (env)->CallObjectMethod( g_obj, messageMe, jstr1);
+}
 
-        const char* str = (env)->GetStringUTFChars((jstring) result, NULL); // should be released but what a heck, it's a tutorial :)
-        printf("%s\n", str);
-
-        return (env)->NewStringUTF( str);
+jstring Java_fr_bmartel_android_curlndk_CurlActivity_getJniString( JNIEnv* env, jobject obj){
+        g_env = env;
+        g_obj = obj;
+        string  msg = "ARUN KULKARNI from FUCNTION";
+        callJavaApi("ARUN KULKARNI SEPERATE API");
+        return (env)->NewStringUTF( "From -- NDK ");
     }
-
-
 }
