@@ -24,10 +24,11 @@ static jobject gObject;
 static jclass gClass;
 static JNIEnv* gEnv=0; 
 
-std::string filePath = "/sdcard/";//downloadFile.txt";
-//std::string filePath = "/sdcard/downloadFile.txt";
+std::string filePath = "/sdcard/";
+
 int dlBytes = 0,totalSize = 0;
 bool isDone = false ;
+std::string gFilePath ;
 
 #if 10
 uint64_t get_tid() {
@@ -38,7 +39,6 @@ uint64_t get_tid() {
 }
 #endif
 size_t writeCallback(char* buf, size_t size, size_t nmemb, void* up) {
-LOGE(" %s tid() - %lu",__FUNCTION__,get_tid());
 	for (int c = 0; c<size*nmemb; c++) {
 		response.push_back(buf[c]);
        	}
@@ -57,8 +57,7 @@ LOGE(" %s tid() - %lu",__FUNCTION__,get_tid());
 }
 
 void callJavaApi1(std::string s){
-		LOGE(" %s tid() - %lu",__FUNCTION__,get_tid());
-		
+		LOGE(" %s tid() - %lu",__FUNCTION__,get_tid());	
 	    JNIEnv * g_env;
     // double check it's all ok
 	
@@ -135,7 +134,7 @@ LOGE("%s : %d ",__FUNCTION__,__LINE__);
 int my_progress_func(void *bar, double dltotal,double dlnow,double ultotal,double ulnow)
 {
 	LOGE(" %s tid() - %lu",__FUNCTION__,get_tid());
-    LOGE(" Progress %.2f / %.2f : %f / %f\n", dlnow, dltotal, ultotal, ulnow);
+    LOGE(" Progress %.2f / %.2f \n", dlnow, dltotal);
 	isDone = false;
 	dlBytes = dlnow;
 	totalSize = dltotal;
@@ -165,6 +164,7 @@ string curl_downloadFile( string Url){
 		
 		std::string filename = Url.substr( Url.find_last_of("/") + 1 );	
 		filePath.append(filename);
+		gFilePath = filePath;
         FILE* file = fopen(filePath.c_str(),"w+");
 		LOGE(" %s tid() - %lu",__FUNCTION__,get_tid());
 		
@@ -230,11 +230,15 @@ void JNI_OnUnload(JavaVM *vm, void *reserved)  {
 gJavaVM = NULL; 
 } 
 
-jstring Java_fr_bmartel_android_curlndk_CurlActivity_getJniString( JNIEnv* env, jobject obj){	
-        string  msg = "Calling JAVA From Native code";
-		LOGE(" %s tid() - %lu",__FUNCTION__,get_tid());
-        callJavaApi(msg);
+jstring Java_fr_bmartel_android_curlndk_CurlActivity_getJniString( JNIEnv* env, jobject obj){	       
+
+        //callJavaApi(msg);
         return (env)->NewStringUTF( "From -- NDK ");
+}
+
+jstring Java_fr_bmartel_android_curlndk_CurlActivity_getFilePath( JNIEnv* env, jobject obj){	
+LOGE(" gFilePath %s",gFilePath.c_str());
+        return (env)->NewStringUTF( gFilePath.c_str());
 }
 	
 jint Java_fr_bmartel_android_curlndk_CurlActivity_getdownloadProgress( JNIEnv* env, jobject obj){

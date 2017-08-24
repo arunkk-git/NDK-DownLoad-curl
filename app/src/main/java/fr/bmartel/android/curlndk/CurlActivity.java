@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,8 @@ public class CurlActivity extends Activity {
     EditText url;
     Button download_File,play_Media;
     VideoView videoView;
+    String gFilePath=null ;
+    long  gFileSize=0 ;
 
     // the java declaration for your wrapper test function
     public native void init();
@@ -31,6 +34,7 @@ public class CurlActivity extends Activity {
     public native int getdownloadProgress();
     public native boolean getisDownLoaded();
     public native int getTotalFileSize();
+    public native String getFilePath();
 
     // tell java which library to load
     static {
@@ -85,33 +89,47 @@ public class CurlActivity extends Activity {
 
     }
 
-    private void downloadFile(String URL){
+    private void downloadFile(final String url){
         new Thread(new Runnable() {
-            String URL = "http://172.16.0.141/test/Sample.ts";
+            final String URL = url;//"http://172.16.0.141/test/Sample.ts";
             @Override
             public void run() {
                 Log.e(TAG, " getCurlResponse = "+URL);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        play_Media.setTextColor(Color.RED);
                         spinner.setVisibility(View.VISIBLE);
+                        play_Media.setVisibility(View.INVISIBLE);
+                        play_Media.setClickable(false);
+                        videoView.setVisibility(View.INVISIBLE);
                         progress.setText("Download in progress....");
                     }
                 });
 
-                final String response = getCurlResponse(URL);
+                final String response = getCurlResponse(URL); // From Native NDK code
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        gFilePath = getFilePath(); // From Native NDK code
+                        gFileSize = getTotalFileSize(); // From Native NDK code
+                    }
+                }).start();
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         Log.e(TAG, "Response = "+response);
+
                         spinner.setVisibility(View.INVISIBLE);
                         spinner.setBackgroundColor(Color.MAGENTA);
                         play_Media.setTextColor(Color.GREEN);
                         play_Media.setClickable(true);
+                        play_Media.setVisibility(View.VISIBLE);
                         progress.setTextColor(Color.GREEN);
-                        progress.setTextSize(25);
-                        progress.setText("Download Completed");
+                        progress.setTextSize(20);
+                        progress.setText("Download Completed" + " \n Size = "+ gFileSize/( 1024* 1024 )+" MBs" );
+
                     }
                 });
             }
@@ -121,8 +139,18 @@ public class CurlActivity extends Activity {
     public void PlayVideo(View view) {
         progress.setVisibility(View.INVISIBLE);
         videoView.setVisibility(View.VISIBLE);
-        Uri uri = Uri.parse("/sdcard/Sample.ts");
+
+        MediaController mediaController= new MediaController(this);
+        mediaController.setAnchorView(videoView);
+String filePath =getFilePath();
+        Log.e(TAG,"File Path "+filePath);
+        Uri uri = Uri.parse(filePath);
+
+        videoView.setMediaController(mediaController);
+
         videoView.setVideoURI(uri);
+
+        videoView.requestFocus();
         videoView.start();
     }
 }
