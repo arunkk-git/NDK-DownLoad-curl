@@ -6,30 +6,71 @@
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".CurlActivity">
 
     <Button
-        android:id="@+id/curl_request_btn"
-        android:text="Http request"
+        android:id="@+id/downloadReq"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="47dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="47dp"
+        android:text="Download File" />
+
+    <Button
+        android:id="@+id/play"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Play File"
+        android:clickable="false"
+        android:onClick="PlayVideo"
+        android:layout_below="@+id/downloadReq"
         android:layout_alignParentStart="true" />
 
-    <TextView
-        android:id="@+id/curl_response_txt"
-        android:layout_marginTop="10dp"
-        android:text=""
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/curl_request_btn"
-        android:layout_alignParentEnd="true" />
+        android:layout_height="wrap_content"
+        android:id="@+id/url"
+        android:hint="Enter URL here ..."/>
+    <!--<TextView-->
+        <!--android:id="@+id/curl_response_txt"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:text=""-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_below="@+id/curl_request_btn"-->
+        <!--android:layout_alignParentEnd="true" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/head"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:text="Msg" />-->
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="125dp"
-        android:text="TextView"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/play"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+         />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:progressDrawable="@drawable/circular_progress_bar"
+
+        android:layout_below="@+id/downloadReq"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="149dp" />
+
+    <VideoView
+        android:id="@+id/videoView"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/progressBar" />
 
 </RelativeLayout>

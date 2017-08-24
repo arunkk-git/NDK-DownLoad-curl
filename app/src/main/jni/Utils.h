@@ -18,9 +18,14 @@
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
-
-std::string jstring2string(JNIEnv *env, jstring jStr) ;
-
+/*
+uint64_t get_tid() {
+    pthread_t ptid = pthread_self();
+    uint64_t threadId = 0;
+    memcpy(&threadId, &ptid, sizeof(ptid));
+    return threadId;
+}
+*/
 //File * createFile(char *);
 
 #endif //NDK_CURL_SAMPLE_MASTER_UTILS_H

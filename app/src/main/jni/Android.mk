@@ -30,6 +30,7 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../prebuild/include
 LOCAL_C_INCLUDES +=$(LOCAL_PATH)/
 LOCAL_SRC_FILES := curl-http.cpp Utils.cpp
 
+
 LOCAL_STATIC_LIBRARIES := libcurl libssl libcrypto libz
 
 LOCAL_LDLIBS    := -llog
